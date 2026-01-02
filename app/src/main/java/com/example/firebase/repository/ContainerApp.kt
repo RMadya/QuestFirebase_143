@@ -14,3 +14,10 @@ class DefaultContainerApp : ContainerApp {
     }
 }
 
+class AplikasiDataSiswa : Application() {
+    lateinit var container: ContainerApp
+    override fun onCreate() {
+        super.onCreate()
+        this.container = DefaultContainerApp()
+    }
+}
