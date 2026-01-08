@@ -18,3 +18,12 @@ sealed interface StatusUIDetail {
     object Loading : StatusUIDetail
 }
 
+class DetailViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val repositorySiswa: RepositorySiswa
+) : ViewModel() {
+
+    private val idSiswa: String =
+        savedStateHandle.get<String>(DestinasiDetail.itemIdArg)
+            ?: error("idSiswa tidak ditemukan di SavedStateHandle")
+
