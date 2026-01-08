@@ -79,4 +79,81 @@ fun DetailSiswaScreen(
             }
         },
         modifier = modifier
+    ) { innerPadding ->
+        val coroutineScope = rememberCoroutineScope()
+
+        BodyDetailDataSiswa(
+            statusUIDetail = uiState,
+            onDelete = {
+                coroutineScope.launch {
+                    viewModel.hapusSatuSiswa()
+                    navigateBack()
+                }
+            },
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+        )
+    }
+}
+
+
+@Composable
+private fun BodyDetailDataSiswa(
+    statusUIDetail: StatusUIDetail,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ) {
+
+        var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
+
+        when (statusUIDetail) {
+
+            is StatusUIDetail.Loading -> {
+                CircularProgressIndicator()
+            }
+
+            is StatusUIDetail.Error -> {
+                Text(text = stringResource(R.string.error))
+            }
+
+            is StatusUIDetail.Success -> {
+                val siswa = statusUIDetail.satusiswa
+                if (siswa != null) {
+
+                    DetailDataSiswa(
+                        siswa = siswa,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedButton(
+                        onClick = { deleteConfirmationRequired = true },
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.delete))
+                    }
+                }
+            }
+        }
+
+        if (deleteConfirmationRequired) {
+            DeleteConfirmationDialog(
+                onDeleteConfirm = {
+                    deleteConfirmationRequired = false
+                    onDelete()
+                },
+                onDeleteCancel = {
+                    deleteConfirmationRequired = false
+                }
+            )
+        }
+    }
+}
+
+
+}
