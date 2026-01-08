@@ -23,3 +23,32 @@ class EditViewModel(
         private set
 
     // ✅ FIX: ID STRING (BUKAN LONG)
+    private val idSiswa: String =
+        savedStateHandle.get<String>(DestinasiDetail.itemIdArg)
+            ?: error("idSiswa tidak ditemukan di SavedStateHandle")
+
+    init {
+        viewModelScope.launch {
+            val siswa = repositorySiswa.getSatuSiswa(idSiswa)
+            if (siswa != null) {
+                uiStateSiswa = siswa.toUiStateSiswa(isEntryValid = true)
+            }
+        }
+    }
+
+    fun updateUiState(detailSiswa: DetailSiswa) {
+        uiStateSiswa = UIStateSiswa(
+            detailSiswa = detailSiswa,
+            isEntryValid = validasiInput(detailSiswa)
+        )
+    }
+
+    private fun validasiInput(
+        detailSiswa: DetailSiswa = uiStateSiswa.detailSiswa
+    ): Boolean {
+        return detailSiswa.nama.isNotBlank()
+                && detailSiswa.alamat.isNotBlank()
+                && detailSiswa.telpon.isNotBlank()
+    }
+
+    
