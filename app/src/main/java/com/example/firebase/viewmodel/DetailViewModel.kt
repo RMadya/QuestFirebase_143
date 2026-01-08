@@ -27,3 +27,10 @@ class DetailViewModel(
         savedStateHandle.get<String>(DestinasiDetail.itemIdArg)
             ?: error("idSiswa tidak ditemukan di SavedStateHandle")
 
+    var statusUIDetail: StatusUIDetail by mutableStateOf(StatusUIDetail.Loading)
+        private set
+
+    init {
+        getSatuSiswa()
+    }
+
